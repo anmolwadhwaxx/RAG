@@ -1,7 +1,9 @@
-langchain==0.0.154
+langchain==0.2.1
 PyPDF2==3.0.1
-python-dotenv==1.0.0
-streamlit==1.18.1
+python-dotenv==1.0.1
+streamlit==1.35.0
 faiss-cpu==1.7.4
-streamlit-extras
+streamlit-extras==0.4.3
+langchain-openai==0.1.8
+langchain-community==0.2.1
 altair<5
