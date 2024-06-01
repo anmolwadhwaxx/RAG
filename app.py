@@ -10,10 +10,11 @@ from langchain_openai import OpenAI
 from langchain.chains.question_answering import load_qa_chain
 from langchain_community.callbacks import get_openai_callback
 import os
+import requests
 
 # Sidebar contents
 with st.sidebar:
-    st.title(' LLM Chat App')
+    st.title('LLM Chat App')
     st.markdown('''
     ## About
     This app is an LLM-powered chatbot built using:
@@ -26,20 +27,27 @@ with st.sidebar:
 
 load_dotenv()
 
+def submit_query_to_google_form(query, response):
+    form_url = 'https://docs.google.com/forms/d/e/1FAIpQLScnwq4U7iLOcq1VKggFp-RdBFF64cd5b3evesGNPcCDbFM9Zw/formResponse'
+    form_data = {
+        'entry.112538290': query,
+        'entry.659081082': response  # Replace with actual entry ID for the chatbot response
+    }
+    response = requests.post(form_url, data=form_data)
+    return response
 
 def main():
-    st.header("Chat with PDF ")
+    st.header("Chat with PDF")
 
     # Initialize VectorStore to None
     VectorStore = None
 
-    # upload a PDF file
+    # Upload a PDF file
     pdf = st.file_uploader("Upload your PDF", type='pdf')
 
-    # st.write(pdf)
+    # Process the PDF file
     if pdf is not None:
         pdf_reader = PdfReader(pdf)
-
         text = ""
         for page in pdf_reader.pages:
             text += page.extract_text()
@@ -73,9 +81,9 @@ def main():
                     VectorStore = FAISS.from_texts(non_empty_chunks, embedding=embeddings)
                     with open(f"{store_name}.pkl", "wb") as f:
                         pickle.dump(non_empty_chunks, f)  # Pickle only the text chunks
-                        st.write('Embeddings Saved to Disk')  # Add debug statement
+                        st.write('Embeddings Saved to Disk')
                 else:
-                    st.error("No enough text found in the PDF for processing.")
+                    st.error("Not enough text found in the PDF for processing.")
 
         except FileNotFoundError:
             st.error("Pickled file not found.")
@@ -87,6 +95,9 @@ def main():
             query = st.text_input("Ask questions about your PDF file:")
 
             if query:
+             
+        
+
                 docs = VectorStore.similarity_search(query=query, k=3)
 
                 llm = OpenAI()
@@ -95,6 +106,9 @@ def main():
                     response = chain.run(input_documents=docs, question=query)
                     st.write(response)
 
+                # Submit query and chatbot response to Google Form
+                form_response = submit_query_to_google_form(query, response)
+            
 
 if __name__ == '__main__':
     main()
