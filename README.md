@@ -1,5 +1,5 @@
 <a href="https://github.com/anmolwadhwaxx/RAG" target="_blank">
-    <img src="https://via.placeholder.com/1000x300.png?text=LLM+Chat+App" alt="LLM Chat App" width="1000">
+    <img src="https://via.placeholder.com/1000x300.png?text=LLM+Chat+App" target="_blank" alt="LLM Chat App" width="1000">
 </a>
 
 # LLM Chat App
